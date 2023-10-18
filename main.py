@@ -1,27 +1,42 @@
+import datetime
 import mysql.connector
 
-dbConn = mysql.connector.connect(host='localhost', user='root', password='', database='BANK_MANAGEMENT')
+dbConn = mysql.connector.connect(host='localhost', user='root', password='2360mamun', database='BANK_MANAGEMENT')
 
 def openAcc():
     name = input("Enter customer name: ")
     account = input("Enter customer account number: ")
     DOB = input("Enter customer Date of Birth: ")
     address = input("Enter customer address: ")
-    contact = int(input("Enter customer contact: "))  # Convert to an integer
+    contact = input("Enter customer contact: ")
     openBalance = int(input("Enter customer open balance: "))
+    
     data1 = (name, account, DOB, address, contact, openBalance)
     data2 = (name, account, openBalance)
-    sql_query1 = 'INSERT INTO ACCOUNT VALUES(%s, %s, %s, %s, %s, %s)'
-    sql_query2 = 'INSERT INTO Amount VALUES(%s, %s, %s)'
+   
+    sql_query1 = 'INSERT INTO ACCOUNT (name, accNo, DOB, address, contactNo, openingBal) VALUES(%s, %s, %s, %s, %s, %s)'
+    sql_query2 = 'INSERT INTO Amount (name, accNo, balance) VALUES(%s, %s, %s)'
     x = dbConn.cursor()
     x.execute(sql_query1, data1)
     x.execute(sql_query2, data2)
     dbConn.commit()
     print("Data Entered Successfully")
 
-def despoAmount():
+def depoAmount():
+    amount = input("Enter the amount you to deposite: ")
+    account = input("Enter customer account number: ")
+    query= 'select balance from amount where AccNo=%s'
+    data=(query,)
+    x= dbConn.cursor()
+    x.execute(query,data)
+    result=x.fechone()
+    t= result[0]+amount
+    update_query= ('update amount set balance where AccNo=%s')
+    data1=(t,account)
+    x.execute(update_query,data1)
+    dbConn.commit()
+    
 
-    return None
 
 def withAmount():
   
@@ -53,7 +68,7 @@ def main():
     if choices == "1":
         openAcc()
     elif choices == "2":
-        despoAmount()
+        depoAmount()
     elif choices == "3":
         withAmount()
     elif choices == "4":
