@@ -36,11 +36,19 @@ def depoAmount():
     x.execute(update_query,data1)
     dbConn.commit()
     
-
-
-def withAmount():
-  
-    return None
+def withdrawAmount():
+    amount= input("Enter the amount you want to withdraw: ")
+    ac= input("Enter customer account number: ")
+    a= 'select balance from amount where AccNo=%s'
+    data= (ac,)
+    x= dbConn.cursor()
+    x.execute(a, data)
+    result=x.fechone()
+    t= result[0]-amount
+    sql= ('update amonut set balance where AccNo=%s')
+    d= (t, ac)
+    x.execute(sql, d)
+    dbConn.commit()
 
 def balanceEnquiry():
    
@@ -70,7 +78,7 @@ def main():
     elif choices == "2":
         depoAmount()
     elif choices == "3":
-        withAmount()
+        withdrawAmount()
     elif choices == "4":
         balanceEnquiry()
     elif choices == "5":
