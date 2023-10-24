@@ -23,18 +23,35 @@ def openAcc():
     print("Data Entered Successfully")
 
 def depoAmount():
-    amount = input("Enter the amount you to deposite: ")
+    amount = input("Enter the amount you want to deposit: ")
     account = input("Enter customer account number: ")
-    query= 'select balance from amount where AccNo=%s'
-    data=(query,)
-    x= dbConn.cursor()
-    x.execute(query,data)
-    result=x.fechone()
-    t= result[0]+amount
-    update_query= ('update amount set balance where AccNo=%s')
-    data1=(t,account)
-    x.execute(update_query,data1)
-    dbConn.commit()
+    
+    # Select the current balance
+    select_query = 'SELECT balance FROM amount WHERE AccNo = %s'
+    data = (account,)
+    
+    x = dbConn.cursor()
+    x.execute(select_query, data)
+    
+    # Fetch the current balance
+    result = x.fetchone()
+    
+    if result is not None:
+        current_balance = result[0]
+        
+        # Calculate the new balance
+        new_balance = current_balance + int(amount)
+        
+        # Update the balance in the database
+        update_query = 'UPDATE amount SET balance = %s WHERE AccNo = %s'
+        data1 = (new_balance, account)
+        
+        x.execute(update_query, data1)
+        dbConn.commit()
+        print("Amount deposited successfully.")
+    else:
+        print("Account not found or balance not available.")
+
     
 def withdrawAmount():
     amount= input("Enter the amount you want to withdraw: ")
@@ -51,8 +68,22 @@ def withdrawAmount():
     dbConn.commit()
 
 def balanceEnquiry():
-   
-    return None
+     account = input("Enter customer account number: ")
+     select_query = 'SELECT balance FROM amount WHERE AccNo = %s'
+     data = (account,)
+     x = dbConn.cursor()
+     x.execute(select_query, data)
+     x = dbConn.cursor()
+     x.execute(select_query, data)
+    
+     # Fetch the current balance
+     result = x.fetchone()
+    
+     if result is not None:
+         current_balance = result[0]
+         print("Balance: %s" % current_balance)
+     else:
+         print("Account not found or balance not available.")
 
 def displayCustomer():
   
