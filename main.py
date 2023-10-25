@@ -73,9 +73,6 @@ def balanceEnquiry():
      data = (account,)
      x = dbConn.cursor()
      x.execute(select_query, data)
-     x = dbConn.cursor()
-     x.execute(select_query, data)
-    
      # Fetch the current balance
      result = x.fetchone()
     
