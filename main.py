@@ -1,12 +1,12 @@
 import datetime
 import mysql.connector
 
-dbConn = mysql.connector.connect(host='localhost', user='root', password='2360mamun', database='BANK_MANAGEMENT')
+dbConn = mysql.connector.connect(host='localhost', user='root', password='', database='BANK_MANAGEMENT')
 
 def openAcc():
     name = input("Enter customer name: ")
     account = input("Enter customer account number: ")
-    DOB = input("Enter customer Date of Birth: ")
+    DOB = input("Enter customer Date of Birth (YYYY-MM-DD): ")
     address = input("Enter customer address: ")
     contact = input("Enter customer contact: ")
     openBalance = int(input("Enter customer open balance: "))
@@ -54,18 +54,37 @@ def depoAmount():
 
     
 def withdrawAmount():
-    amount= input("Enter the amount you want to withdraw: ")
-    ac= input("Enter customer account number: ")
-    a= 'select balance from amount where AccNo=%s'
-    data= (ac,)
-    x= dbConn.cursor()
-    x.execute(a, data)
-    result=x.fechone()
-    t= result[0]-amount
-    sql= ('update amonut set balance where AccNo=%s')
-    d= (t, ac)
-    x.execute(sql, d)
-    dbConn.commit()
+    amount = input("Enter the amount you want to withdraw: ")
+    account = input("Enter customer account number: ")
+    
+    # Select the current balance
+    select_query = 'SELECT balance FROM Amount WHERE accNo = %s'
+    data = (account,)
+    
+    x = dbConn.cursor()
+    x.execute(select_query, data)
+    
+    # Fetch the current balance
+    result = x.fetchone()
+    
+    if result is not None:
+        current_balance = result[0]
+        
+        if current_balance >= int(amount):
+            # Calculate the new balance
+            new_balance = current_balance - int(amount)
+        
+            # Update the balance in the database
+            update_query = 'UPDATE Amount SET balance = %s WHERE accNo = %s'
+            data1 = (new_balance, account)
+        
+            x.execute(update_query, data1)
+            dbConn.commit()
+            print("Amount withdrawn successfully.")
+        else:
+            print("Insufficient balance.")
+    else:
+        print("Account not found or balance not available.")
 
 def balanceEnquiry():
      account = input("Enter customer account number: ")
@@ -83,12 +102,50 @@ def balanceEnquiry():
          print("Account not found or balance not available.")
 
 def displayCustomer():
-  
-    return None
+    account = input("Enter customer account number: ")
+    
+    # Select customer details
+    select_query = 'SELECT * FROM ACCOUNT WHERE accNo = %s'
+    data = (account,)
+    
+    x = dbConn.cursor()
+    x.execute(select_query, data)
+    
+    # Fetch the customer details
+    result = x.fetchone()
+    
+    if result is not None:
+        print("Customer Details:")
+        print("Name:", result[1])
+        print("Account Number:", result[2])
+        print("Date of Birth:", result[3])
+        print("Address:", result[4])
+        print("Contact Number:", result[5])
+        print("Opening Balance:", result[6])
+    else:
+        print("Account not found.")
+
+
 
 def closeAccount():
-   
-    return None
+     account = input("Enter customer account number: ")
+     select_query = 'SELECT * FROM ACCOUNT WHERE AccNo = %s'
+     data = (account,)
+     x = dbConn.cursor()
+     x.execute(select_query, data)
+     # Fetch the current balance
+     result = x.fetchone()
+    
+     if result is not None:
+         delete_query = 'DELETE FROM ACCOUNT WHERE AccNo = %s'
+         data = (account,)
+         x = dbConn.cursor()
+         x.execute(delete_query,data)
+         dbConn.commit()
+         print("Account deleted successfully.")
+         
+     else:
+         print("Account not found.")
 
 def main():
     print('''
